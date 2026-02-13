@@ -9,17 +9,19 @@ body {
     overflow: hidden;
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    text-align: center;
     color: white;
+    text-align: center;
 }
 #startScreen {
-    position: absolute;
+    position: fixed;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    z-index: 10;
+    background: rgba(0,0,0,0.2);
 }
 button {
     padding: 15px 30px;
@@ -31,20 +33,20 @@ button {
     cursor: pointer;
 }
 #scoreBoard {
-    position: absolute;
+    position: fixed;
     top: 20px;
     width: 100%;
     font-size: 20px;
 }
 #reaction {
-    position: absolute;
+    position: fixed;
     bottom: 20px;
     width: 100%;
     font-size: 22px;
 }
 #finalMessage {
     display: none;
-    position: absolute;
+    position: fixed;
     top: 15%;
     width: 90%;
     font-size: 24px;
@@ -55,14 +57,14 @@ button {
     font-size: 20px;
 }
 .letter {
-    position: absolute;
-    bottom: -50px;
+    position: fixed;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
+    user-select: none;
     transition: transform 0.2s;
 }
-/* Flying heart animation */
+/* Flying hearts animation */
 .flying-heart {
     position: fixed;
     font-size: 24px;
@@ -103,7 +105,8 @@ let letterInterval;
 function startGame() {
     document.getElementById("startScreen").style.display = "none";
     gameRunning = true;
-    letterInterval = setInterval(createLetter, 800);
+    // create letters every 700ms
+    letterInterval = setInterval(createLetter, 700);
 }
 
 function createLetter() {
@@ -115,34 +118,37 @@ function createLetter() {
     const letter = document.createElement("div");
     letter.className = "letter";
     letter.innerText = randomLetter;
-    letter.style.left = Math.random() * (window.innerWidth - 40) + "px";
+
+    // start at random horizontal position
+    letter.style.left = Math.random() * (window.innerWidth - 50) + "px";
+    letter.style.top = "-50px";
     document.body.appendChild(letter);
 
-    let position = -50;
+    let pos = -50;
     const fall = setInterval(() => {
-        position += 3;
-        letter.style.bottom = position + "px";
-        if (position > window.innerHeight) {
+        pos += 4;
+        letter.style.top = pos + "px";
+        if (pos > window.innerHeight) {
             clearInterval(fall);
             letter.remove();
         }
     }, 20);
 
-    letter.onclick = function(event) {
+    letter.onclick = function() {
         if (uniqueLetters.includes(randomLetter)) {
             if (!collected.includes(randomLetter)) collected.push(randomLetter);
-            document.getElementById("scoreBoard").innerHTML =
+            document.getElementById("scoreBoard").innerText =
                 "Collected: " + collected.join(" ");
-            document.getElementById("reaction").innerHTML = "💖";
+            document.getElementById("reaction").innerText = "💖";
 
             if (collected.length === uniqueLetters.length) {
                 gameRunning = false;
                 clearInterval(letterInterval);
                 showFinalMessage();
-                triggerFlyingHearts(); // hearts now appear randomly from bottom
+                triggerFlyingHearts();
             }
         } else {
-            document.getElementById("reaction").innerHTML =
+            document.getElementById("reaction").innerText =
                 "Sino yang " + randomLetter + " na yan? 😢";
         }
         clearInterval(fall);
@@ -156,45 +162,44 @@ function showFinalMessage() {
     setInterval(updateCounters, 1000);
 }
 
-// --- Counter functions ---
+// --- Counters ---
 function updateCounters() {
     const now = new Date();
-
     const startTime = new Date("2025-05-02T00:00:00");
     const diffMs = now - startTime;
     const diffDays = Math.floor(diffMs / (1000*60*60*24));
     const diffHours = Math.floor((diffMs / (1000*60*60)) % 24);
     const diffMinutes = Math.floor((diffMs / (1000*60)) % 60);
     const diffSeconds = Math.floor((diffMs / 1000) % 60);
-    document.getElementById("runningTime").innerText = 
+    document.getElementById("runningTime").innerText =
         `Running time since May 2, 2025: ${diffDays} days, ${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
 
     const startMonthsary = new Date("2025-12-21T00:00:00");
     let monthsDiff = (now.getFullYear() - startMonthsary.getFullYear()) * 12;
     monthsDiff += now.getMonth() - startMonthsary.getMonth();
     if (now.getDate() < startMonthsary.getDate()) monthsDiff -= 1;
-    document.getElementById("monthsary").innerText = `Monthsary: ${monthsDiff >= 0 ? monthsDiff + 1 : 0} month(s)`;
+    document.getElementById("monthsary").innerText =
+        `Monthsary: ${monthsDiff >= 0 ? monthsDiff + 1 : 0} month(s)`;
 
     const daysDiff = Math.floor((now - startMonthsary) / (1000*60*60*24));
-    document.getElementById("daysSinceYes").innerText = `Days since I got a yes: ${daysDiff >= 0 ? daysDiff : 0} day(s)`;
+    document.getElementById("daysSinceYes").innerText =
+        `Days since I got a yes: ${daysDiff >= 0 ? daysDiff : 0} day(s)`;
 }
 
-// --- Flying hearts effect ---
+// --- Flying hearts ---
 function triggerFlyingHearts() {
-    const colors = ["#ff4e7a", "#ff758c", "#ffb3c6", "#fff"];
-    const heartsCount = 50;
-
-    for (let i = 0; i < heartsCount; i++) {
-        setTimeout(() => {
+    const colors = ["#ff4e7a","#ff758c","#ffb3c6","#fff"];
+    for (let i=0; i<50; i++) {
+        setTimeout(()=>{
             const heart = document.createElement("div");
             heart.className = "flying-heart";
             heart.innerText = "❤️";
             heart.style.left = Math.random() * window.innerWidth + "px";
-            heart.style.top = window.innerHeight + "px"; // start from bottom
-            heart.style.color = colors[Math.floor(Math.random() * colors.length)];
+            heart.style.top = window.innerHeight + "px"; // start at bottom
+            heart.style.color = colors[Math.floor(Math.random()*colors.length)];
             document.body.appendChild(heart);
-            setTimeout(() => heart.remove(), 3000);
-        }, i * 100);
+            setTimeout(()=>heart.remove(), 3000);
+        }, i*100);
     }
 }
 </script>
