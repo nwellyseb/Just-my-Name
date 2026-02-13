@@ -2,142 +2,102 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Catch My Name 💖</title>
+<title>Catch My Name</title>
 <style>
 body {
-    margin: 0;
-    overflow: hidden;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    text-align: center;
-    color: white;
+    margin:0;
+    background:#ff7eb3;
+    font-family:Arial;
+    text-align:center;
+    color:white;
 }
 
-#startScreen {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background: linear-gradient(135deg, #ff758c, #ff7eb3);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-}
-
-button {
-    padding: 15px 30px;
-    font-size: 18px;
-    border: none;
-    border-radius: 25px;
-    background: white;
-    color: #ff4e7a;
-    cursor: pointer;
-}
-
-#scoreBoard {
-    position: absolute;
-    top: 20px;
-    width: 100%;
-    font-size: 20px;
-}
-
-#reaction {
-    position: absolute;
-    bottom: 20px;
-    width: 100%;
-    font-size: 22px;
-}
-
-#finalMessage {
-    display: none;
-    position: absolute;
-    top: 40%;
-    width: 100%;
-    font-size: 28px;
+#gameArea {
+    position:relative;
+    width:100%;
+    height:80vh;
+    overflow:hidden;
+    background:#ff758c;
 }
 
 .letter {
-    position: absolute;
-    bottom: -50px;
-    font-size: 40px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: transform 0.2s;
+    position:absolute;
+    font-size:40px;
+    font-weight:bold;
+    cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<div id="startScreen">
-    <h1>Catch The Letters Of My Name 💌</h1>
-    <button onclick="startGame()">Start 💖</button>
-</div>
+<h2>Catch The Letters Of My Name</h2>
+<button onclick="startGame()">Start</button>
+<p id="score">Collected: </p>
+<p id="reaction"></p>
 
-<div id="scoreBoard">Collected: </div>
-<div id="reaction"></div>
-<div id="finalMessage">You completed my name ❤️ Noel Timbang Sebonga 💍</div>
+<div id="gameArea"></div>
 
 <script>
 
-const fullName = "NOELTIMBANGSEBONGA";
-const uniqueLetters = [...new Set(fullName.split(""))];
+var fullName = "NOELTIMBANGSEBONGA";
+var uniqueLetters = [];
+var collected = [];
 
-let collected = [];
-let gameRunning = false;
+for (var i = 0; i < fullName.length; i++) {
+    if (uniqueLetters.indexOf(fullName[i]) === -1) {
+        uniqueLetters.push(fullName[i]);
+    }
+}
 
 function startGame() {
-    document.getElementById("startScreen").style.display = "none";
-    gameRunning = true;
-    setInterval(createLetter, 800);
+    document.querySelector("button").style.display = "none";
+    setInterval(createLetter, 1000);
 }
 
 function createLetter() {
-    if (!gameRunning) return;
 
-    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+    var alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    var randomLetter = alphabet[Math.floor(Math.random()*alphabet.length)];
 
-    const letter = document.createElement("div");
+    var letter = document.createElement("div");
     letter.className = "letter";
-    letter.innerText = randomLetter;
-    letter.style.left = Math.random() * (window.innerWidth - 40) + "px";
+    letter.innerHTML = randomLetter;
 
-    document.body.appendChild(letter);
+    letter.style.left = Math.random()*90 + "%";
+    letter.style.top = "0px";
 
-    let position = -50;
+    document.getElementById("gameArea").appendChild(letter);
 
-    const fall = setInterval(() => {
-        position += 3;
-        letter.style.bottom = position + "px";
-
-        if (position > window.innerHeight) {
+    var fall = setInterval(function(){
+        letter.style.top = (letter.offsetTop + 5) + "px";
+        if(letter.offsetTop > 500){
             clearInterval(fall);
             letter.remove();
         }
-    }, 20);
+    },30);
 
-    letter.onclick = function() {
+    letter.onclick = function(){
 
-        if (uniqueLetters.includes(randomLetter)) {
+        if(uniqueLetters.indexOf(randomLetter) !== -1){
 
-            if (!collected.includes(randomLetter)) {
+            if(collected.indexOf(randomLetter) === -1){
                 collected.push(randomLetter);
             }
 
-            document.getElementById("scoreBoard").innerHTML =
+            document.getElementById("score").innerHTML =
                 "Collected: " + collected.join(" ");
 
             document.getElementById("reaction").innerHTML = "💖";
 
-            if (collected.length === uniqueLetters.length) {
-                gameRunning = false;
-                document.getElementById("finalMessage").style.display = "block";
+            if(collected.length === uniqueLetters.length){
+                document.getElementById("reaction").innerHTML =
+                "You completed my name ❤️ Noel Timbang Sebonga 💍";
             }
 
         } else {
             document.getElementById("reaction").innerHTML =
-                "Sino yang " + randomLetter + " na yan? 😢";
+            "Sino yang " + randomLetter + " na yan? 😢";
         }
 
         clearInterval(fall);
