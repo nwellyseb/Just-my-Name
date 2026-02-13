@@ -102,7 +102,8 @@ button {
 <div id="scoreBoard">Collected: </div>
 <div id="reaction"></div>
 <div id="finalMessage">
-    Happy Valentines Day mahal ko, mahal na mahal kita sobra alam mo yan since day one po..And I would never change mahal ko,<br>
+    ❤️ Happy Valentines Day mahal ko! ❤️<br>
+    Mahal na mahal kita sobra, alam mo yan since day one po..And I would never change mahal ko.<br><br>
     <div class="counter" id="runningTime"></div>
     <div class="counter" id="monthsary"></div>
     <div class="counter" id="daysSinceYes"></div>
@@ -187,18 +188,16 @@ function updateCounters() {
     document.getElementById("runningTime").innerText =
         `Running time since May 2, 2025: ${diffDays} days, ${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
 
-    // Monthsary starting Dec 21
+    // Monthsary from Dec 21, 2025 (count of days)
     const startMonthsary = new Date("2025-12-21T00:00:00");
-    let monthsDiff = (now.getFullYear() - startMonthsary.getFullYear()) * 12;
-    monthsDiff += now.getMonth() - startMonthsary.getMonth();
-    if (now.getDate() < startMonthsary.getDate()) monthsDiff -= 1;
+    const monthsaryDays = Math.floor((now - startMonthsary) / (1000*60*60*24));
     document.getElementById("monthsary").innerText =
-        `Monthsary: ${monthsDiff >= 0 ? monthsDiff + 1 : 0} month(s)`;
+        `Monthsary started Dec 21, 2025 — ${monthsaryDays} day(s)`;
 
-    // Days since Dec 21, 2025
-    const daysDiff = Math.floor((now - startMonthsary) / (1000*60*60*24));
+    // Days since "Yes" (same as above)
+    const daysSinceYes = monthsaryDays;
     document.getElementById("daysSinceYes").innerText =
-        `Days since I got a yes: ${daysDiff >= 0 ? daysDiff : 0} day(s)`;
+        `Days since I got a yes: ${daysSinceYes} day(s)`;
 }
 
 function triggerFlyingHearts() {
@@ -217,5 +216,6 @@ function triggerFlyingHearts() {
     }
 }
 </script>
+
 </body>
 </html>
