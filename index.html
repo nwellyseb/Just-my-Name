@@ -11,17 +11,21 @@ body {
     background: linear-gradient(135deg, #ff758c, #ff7eb3);
     color: white;
     text-align: center;
+    height: 100vh;
+    width: 100vw;
+    position: relative;
 }
 #startScreen {
-    position: fixed;
+    position: absolute;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 10;
     background: rgba(0,0,0,0.2);
+    z-index: 1000;
 }
 button {
     padding: 15px 30px;
@@ -33,20 +37,20 @@ button {
     cursor: pointer;
 }
 #scoreBoard {
-    position: fixed;
+    position: absolute;
     top: 20px;
     width: 100%;
     font-size: 20px;
 }
 #reaction {
-    position: fixed;
+    position: absolute;
     bottom: 20px;
     width: 100%;
     font-size: 22px;
 }
 #finalMessage {
     display: none;
-    position: fixed;
+    position: absolute;
     top: 15%;
     width: 90%;
     font-size: 24px;
@@ -57,16 +61,16 @@ button {
     font-size: 20px;
 }
 .letter {
-    position: fixed;
+    position: absolute;
     font-size: 40px;
     font-weight: bold;
     cursor: pointer;
     user-select: none;
     transition: transform 0.2s;
 }
-/* Flying hearts animation */
+/* Flying heart animation */
 .flying-heart {
-    position: fixed;
+    position: absolute;
     font-size: 24px;
     pointer-events: none;
     user-select: none;
@@ -83,7 +87,7 @@ button {
 
 <div id="startScreen">
     <h1>Catch The Letters Of My Name 💌</h1>
-    <button onclick="startGame()">Start 💖</button>
+    <button id="startBtn">Start 💖</button>
 </div>
 
 <div id="scoreBoard">Collected: </div>
@@ -102,10 +106,12 @@ let collected = [];
 let gameRunning = false;
 let letterInterval;
 
+const startBtn = document.getElementById("startBtn");
+startBtn.addEventListener("click", startGame);
+
 function startGame() {
     document.getElementById("startScreen").style.display = "none";
     gameRunning = true;
-    // create letters every 700ms
     letterInterval = setInterval(createLetter, 700);
 }
 
@@ -119,8 +125,8 @@ function createLetter() {
     letter.className = "letter";
     letter.innerText = randomLetter;
 
-    // start at random horizontal position
-    letter.style.left = Math.random() * (window.innerWidth - 50) + "px";
+    // Random horizontal position
+    letter.style.left = Math.random() * (window.innerWidth - 40) + "px";
     letter.style.top = "-50px";
     document.body.appendChild(letter);
 
@@ -134,7 +140,7 @@ function createLetter() {
         }
     }, 20);
 
-    letter.onclick = function() {
+    letter.onclick = function(event) {
         if (uniqueLetters.includes(randomLetter)) {
             if (!collected.includes(randomLetter)) collected.push(randomLetter);
             document.getElementById("scoreBoard").innerText =
@@ -162,7 +168,6 @@ function showFinalMessage() {
     setInterval(updateCounters, 1000);
 }
 
-// --- Counters ---
 function updateCounters() {
     const now = new Date();
     const startTime = new Date("2025-05-02T00:00:00");
@@ -195,7 +200,7 @@ function triggerFlyingHearts() {
             heart.className = "flying-heart";
             heart.innerText = "❤️";
             heart.style.left = Math.random() * window.innerWidth + "px";
-            heart.style.top = window.innerHeight + "px"; // start at bottom
+            heart.style.top = window.innerHeight + "px";
             heart.style.color = colors[Math.floor(Math.random()*colors.length)];
             document.body.appendChild(heart);
             setTimeout(()=>heart.remove(), 3000);
