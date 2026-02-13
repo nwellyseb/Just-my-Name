@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Catch My Name 💖</title>
+<style>
+body {
+    margin: 0;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    text-align: center;
+    color: white;
+}
+
+#startScreen {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #ff758c, #ff7eb3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+button {
+    padding: 15px 30px;
+    font-size: 18px;
+    border: none;
+    border-radius: 25px;
+    background: white;
+    color: #ff4e7a;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    transform: scale(1.1);
+}
+
+#scoreBoard {
+    position: absolute;
+    top: 15px;
+    width: 100%;
+    font-size: 20px;
+}
+
+.letter {
+    position: absolute;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    animation: floatUp 5s linear forwards;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); opacity: 1; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+#reaction {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    font-size: 22px;
+}
+
+#finalMessage {
+    display: none;
+    position: absolute;
+    top: 40%;
+    width: 100%;
+    font-size: 28px;
+}
+</style>
+</head>
+
+<body>
+
+<div id="startScreen">
+    <h1>Catch The Letters Of My Name 💌</h1>
+    <button onclick="startGame()">Start 💖</button>
+</div>
+
+<div id="scoreBoard">Collected: </div>
+<div id="reaction"></div>
+<div id="finalMessage">You completed my name ❤️ Noel Timbang Sebonga 💍</div>
+
+<script>
+const fullName = "NOELTIMBANGSEBONGA";
+const allowedLetters = fullName.split("");
+let collected = [];
+let gameInterval;
+
+function startGame() {
+    document.getElementById("startScreen").style.display = "none";
+    gameInterval = setInterval(createLetter, 900);
+}
+
+function createLetter() {
+    const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
+
+    const letter = document.createElement("div");
+    letter.className = "letter";
+    letter.innerHTML = randomLetter;
+    letter.style.left = Math.random() * window.innerWidth + "px";
+
+    letter.onclick = function() {
+
+        if (allowedLetters.includes(randomLetter)) {
+
+            if (!collected.includes(randomLetter)) {
+                collected.push(randomLetter);
+            }
+
+            document.getElementById("scoreBoard").innerHTML =
+                "Collected: " + collected.join(" ");
+
+            document.getElementById("reaction").innerHTML = "💖";
+
+            if (collected.length === new Set(allowedLetters).size) {
+                clearInterval(gameInterval);
+                document.getElementById("finalMessage").style.display = "block";
+            }
+
+        } else {
+            document.getElementById("reaction").innerHTML =
+                "Sino yang " + randomLetter + " na yan? 😢";
+        }
+
+        letter.remove();
+    };
+
+    document.body.appendChild(letter);
+
+    setTimeout(() => {
+        letter.remove();
+    }, 5000);
+}
+</script>
+
+</body>
+</html>
