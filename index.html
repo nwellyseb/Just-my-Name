@@ -45,7 +45,7 @@ button {
 #finalMessage {
     display: none;
     position: absolute;
-    top: 20%;
+    top: 15%;
     width: 90%;
     font-size: 24px;
     line-height: 1.5;
@@ -67,8 +67,8 @@ button {
     position: fixed;
     font-size: 24px;
     pointer-events: none;
-    animation: floatUp 3s forwards;
     user-select: none;
+    animation: floatUp 3s forwards;
 }
 @keyframes floatUp {
     0% { transform: translateY(0) scale(1); opacity: 1; }
@@ -116,7 +116,6 @@ function createLetter() {
     letter.className = "letter";
     letter.innerText = randomLetter;
     letter.style.left = Math.random() * (window.innerWidth - 40) + "px";
-
     document.body.appendChild(letter);
 
     let position = -50;
@@ -140,7 +139,7 @@ function createLetter() {
                 gameRunning = false;
                 clearInterval(letterInterval);
                 showFinalMessage();
-                triggerFlyingHearts(event.clientX, event.clientY);
+                triggerFlyingHearts(); // hearts now appear randomly from bottom
             }
         } else {
             document.getElementById("reaction").innerHTML =
@@ -161,7 +160,6 @@ function showFinalMessage() {
 function updateCounters() {
     const now = new Date();
 
-    // Running time since May 2, 2025
     const startTime = new Date("2025-05-02T00:00:00");
     const diffMs = now - startTime;
     const diffDays = Math.floor(diffMs / (1000*60*60*24));
@@ -171,34 +169,32 @@ function updateCounters() {
     document.getElementById("runningTime").innerText = 
         `Running time since May 2, 2025: ${diffDays} days, ${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
 
-    // Monthsary starting Dec 21
     const startMonthsary = new Date("2025-12-21T00:00:00");
     let monthsDiff = (now.getFullYear() - startMonthsary.getFullYear()) * 12;
     monthsDiff += now.getMonth() - startMonthsary.getMonth();
     if (now.getDate() < startMonthsary.getDate()) monthsDiff -= 1;
     document.getElementById("monthsary").innerText = `Monthsary: ${monthsDiff >= 0 ? monthsDiff + 1 : 0} month(s)`;
 
-    // Days since “yes” on Dec 21, 2025
     const daysDiff = Math.floor((now - startMonthsary) / (1000*60*60*24));
     document.getElementById("daysSinceYes").innerText = `Days since I got a yes: ${daysDiff >= 0 ? daysDiff : 0} day(s)`;
 }
 
 // --- Flying hearts effect ---
-function triggerFlyingHearts(x, y) {
+function triggerFlyingHearts() {
     const colors = ["#ff4e7a", "#ff758c", "#ffb3c6", "#fff"];
-    const heartsCount = 30;
+    const heartsCount = 50;
 
     for (let i = 0; i < heartsCount; i++) {
         setTimeout(() => {
             const heart = document.createElement("div");
             heart.className = "flying-heart";
             heart.innerText = "❤️";
-            heart.style.left = (x + (Math.random() * 100 - 50)) + "px";
-            heart.style.top = (y + (Math.random() * 50 - 25)) + "px";
+            heart.style.left = Math.random() * window.innerWidth + "px";
+            heart.style.top = window.innerHeight + "px"; // start from bottom
             heart.style.color = colors[Math.floor(Math.random() * colors.length)];
             document.body.appendChild(heart);
             setTimeout(() => heart.remove(), 3000);
-        }, i * 150); // stagger hearts
+        }, i * 100);
     }
 }
 </script>
