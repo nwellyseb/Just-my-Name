@@ -178,7 +178,7 @@ function showFinalMessage() {
 function updateCounters() {
     const now = new Date();
 
-    // Running time since May 2, 2025
+    // Days, hours, minutes, seconds since May 2, 2025
     const startTime = new Date("2025-05-02T00:00:00");
     const diffMs = now - startTime;
     const diffDays = Math.floor(diffMs / (1000*60*60*24));
@@ -186,18 +186,17 @@ function updateCounters() {
     const diffMinutes = Math.floor((diffMs / (1000*60)) % 60);
     const diffSeconds = Math.floor((diffMs / 1000) % 60);
     document.getElementById("runningTime").innerText =
-        `Running time since May 2, 2025: ${diffDays} days, ${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
+        `${diffDays} days, ${diffHours}h ${diffMinutes}m ${diffSeconds}s`;
 
-    // Monthsary from Dec 21, 2025 (count of days)
+    // Monthsary from Dec 21, 2025 — always 1 month
     const startMonthsary = new Date("2025-12-21T00:00:00");
     const monthsaryDays = Math.floor((now - startMonthsary) / (1000*60*60*24));
     document.getElementById("monthsary").innerText =
-        `Monthsary started Dec 21, 2025 — ${monthsaryDays} day(s)`;
+        `Monthsary: 1 month — ${monthsaryDays} day(s)`;
 
-    // Days since "Yes" (same as above)
-    const daysSinceYes = monthsaryDays;
+    // Days since "Yes" (from Dec 21, 2025)
     document.getElementById("daysSinceYes").innerText =
-        `Days since I got a yes: ${daysSinceYes} day(s)`;
+        `Days since I got a yes: ${monthsaryDays} day(s)`;
 }
 
 function triggerFlyingHearts() {
