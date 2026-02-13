@@ -32,31 +32,13 @@ button {
     background: white;
     color: #ff4e7a;
     cursor: pointer;
-    transition: 0.3s;
-}
-
-button:hover {
-    transform: scale(1.1);
 }
 
 #scoreBoard {
     position: absolute;
-    top: 15px;
+    top: 20px;
     width: 100%;
     font-size: 20px;
-}
-
-.letter {
-    position: absolute;
-    font-size: 35px;
-    font-weight: bold;
-    cursor: pointer;
-    animation: floatUp 5s linear forwards;
-}
-
-@keyframes floatUp {
-    from { transform: translateY(100vh); opacity: 1; }
-    to { transform: translateY(-10vh); opacity: 0; }
 }
 
 #reaction {
@@ -73,6 +55,15 @@ button:hover {
     width: 100%;
     font-size: 28px;
 }
+
+.letter {
+    position: absolute;
+    bottom: -50px;
+    font-size: 40px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
 </style>
 </head>
 
@@ -88,28 +79,47 @@ button:hover {
 <div id="finalMessage">You completed my name ❤️ Noel Timbang Sebonga 💍</div>
 
 <script>
+
 const fullName = "NOELTIMBANGSEBONGA";
-const allowedLetters = fullName.split("");
+const uniqueLetters = [...new Set(fullName.split(""))];
+
 let collected = [];
-let gameInterval;
+let gameRunning = false;
 
 function startGame() {
     document.getElementById("startScreen").style.display = "none";
-    gameInterval = setInterval(createLetter, 900);
+    gameRunning = true;
+    setInterval(createLetter, 800);
 }
 
 function createLetter() {
+    if (!gameRunning) return;
+
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const randomLetter = alphabet[Math.floor(Math.random() * alphabet.length)];
 
     const letter = document.createElement("div");
     letter.className = "letter";
-    letter.innerHTML = randomLetter;
-    letter.style.left = Math.random() * window.innerWidth + "px";
+    letter.innerText = randomLetter;
+    letter.style.left = Math.random() * (window.innerWidth - 40) + "px";
+
+    document.body.appendChild(letter);
+
+    let position = -50;
+
+    const fall = setInterval(() => {
+        position += 3;
+        letter.style.bottom = position + "px";
+
+        if (position > window.innerHeight) {
+            clearInterval(fall);
+            letter.remove();
+        }
+    }, 20);
 
     letter.onclick = function() {
 
-        if (allowedLetters.includes(randomLetter)) {
+        if (uniqueLetters.includes(randomLetter)) {
 
             if (!collected.includes(randomLetter)) {
                 collected.push(randomLetter);
@@ -120,8 +130,8 @@ function createLetter() {
 
             document.getElementById("reaction").innerHTML = "💖";
 
-            if (collected.length === new Set(allowedLetters).size) {
-                clearInterval(gameInterval);
+            if (collected.length === uniqueLetters.length) {
+                gameRunning = false;
                 document.getElementById("finalMessage").style.display = "block";
             }
 
@@ -130,15 +140,11 @@ function createLetter() {
                 "Sino yang " + randomLetter + " na yan? 😢";
         }
 
+        clearInterval(fall);
         letter.remove();
     };
-
-    document.body.appendChild(letter);
-
-    setTimeout(() => {
-        letter.remove();
-    }, 5000);
 }
+
 </script>
 
 </body>
